@@ -3,7 +3,7 @@ const path = require("path");
 const app = express();
 const PORT = 3000 || process.env.PORT;
 const mongoose = require("mongoose");
-const MONGO_URI = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false";
+//const MONGO_URI = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false";
 const User = require('./models/user');
 const bodyParser = require('body-parser');
 
@@ -23,8 +23,8 @@ app.get("/", async (req, res) => {
 
 // page
 app.get("/data-display", async (req, res) => {
-  const users = await User.find({})
-  res.render("data_display", {users})
+  // const users = await User.find({})
+  res.render("data_display"/*, {users}*/)
 });
 
 // add new user to database
