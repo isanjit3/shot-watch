@@ -52,6 +52,7 @@ app.delete("/deleteUser", async (req, res) => {
 });
 
 // Connecting to MongoDB
+/*
 mongoose.connection.on("connecting", () => {
   console.log(`Connecting to Mongo at ${MONGO_URI}`);
 });
@@ -71,7 +72,7 @@ try {
   });
 } catch (error) {
   console.log(`Mongo connection error: ${error}`);
-}
+} */
 
 // default user params
 // used in app.get("/")
