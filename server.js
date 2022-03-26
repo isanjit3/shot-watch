@@ -27,6 +27,11 @@ app.get("/data-display", async (req, res) => {
   res.render("data_display"/*, {users}*/)
 });
 
+//page
+app.get("/shot-counter", async (req, res) => {
+  res.render("shot_counter")
+});
+
 // add new user to database
 app.post("/addUser", async (req, res) => {
   const user = new User(req.body);
