@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/header') %>
+  </head>
+  <body>
+    <%- include('partials/nav') %>
+    <div class="container text-center page-header mt-3 mb-3">
+        <form action="/get-drink" method="POST">
+            <input type="text" name="drink" value="" placeholder="Alcoholic Drink">
+            <input type="submit">
+        </form>
+        
+
+    </div>
+
+    <%- include('partials/footer') %>
+
+  </body>
+</html>

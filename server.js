@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 //const MONGO_URI = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false";
 const User = require('./models/user');
 const bodyParser = require('body-parser');
+var axios = require("axios").default;
 
 // setting view engine to ejs
 app.set("view engine", "ejs");
@@ -30,7 +31,34 @@ app.get("/data-display", async (req, res) => {
 //page
 app.get("/shot-counter", async (req, res) => {
   res.render("shot_counter")
+
 });
+
+app.post("/get-drink", async (req, res, drink) => {
+
+  var options = {
+    method: 'GET',
+    url: 'www.thecocktaildb.com/api/json/v1/1/search.php',
+    params: { s: drink },
+    headers: {
+      'X-RapidAPI-Host': 'the-cocktail-db.p.rapidapi.com',
+      'X-RapidAPI-Key': 'a238715b31msh1be3143a4b4af8fp17f58cjsn63efa662d1c8'
+    }
+  };
+
+  axios.request(options).then(function (response) {
+  
+  }).catch(function (error) {
+  });
+
+  var alc = req.body.drink
+
+  
+
+
+
+});
+
 
 // add new user to database
 app.post("/addUser", async (req, res) => {
@@ -82,15 +110,15 @@ try {
 // default user params
 // used in app.get("/")
 async function addUser() {
-    const user = new User(
-        {
-            username: 'JohnDoe',
-            firstname: 'John',
-            lastname: 'Doe',
-        }
-    )
+  const user = new User(
+    {
+      username: 'JohnDoe',
+      firstname: 'John',
+      lastname: 'Doe',
+    }
+  )
 
-    const createdUser = await user.save();
+  const createdUser = await user.save();
 }
 
 // listening to application at http://localhost:3000/
