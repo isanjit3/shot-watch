@@ -60,6 +60,18 @@ app.post("/get-drink", async (req, res, drink) => {
 });
 
 
+//page
+app.get("/friend", async (req, res) => {
+  res.render("friend_list")
+});
+
+//page
+app.get("/profile", async (req, res) => {
+  res.render("profile_page")
+});
+
+
+
 // add new user to database
 app.post("/addUser", async (req, res) => {
   const user = new User(req.body);
