@@ -35,27 +35,27 @@ app.get("/shot-counter", async (req, res) => {
 });
 
 app.post("/get-drink", async (req, res, drink) => {
+  var alc = req.body.drink
+  console.log(alc)
+  var uri = 'https://www.thecocktaildb.com/api/json/v1/1/search.php' + '?s=' + alc
 
-  var options = {
-    method: 'GET',
-    url: 'www.thecocktaildb.com/api/json/v1/1/search.php',
-    params: { s: drink },
+  axios.get(uri, {
     headers: {
       'X-RapidAPI-Host': 'the-cocktail-db.p.rapidapi.com',
       'X-RapidAPI-Key': 'a238715b31msh1be3143a4b4af8fp17f58cjsn63efa662d1c8'
     }
-  };
-
-  axios.request(options).then(function (response) {
-  
-  }).catch(function (error) {
-  });
-
-  var alc = req.body.drink
-
-  
-
-
+  })
+    .then(res => {
+      console.log(res.data.drinks)
+      for(al in res.data.drinks) {
+        //Call different API MAYBE
+        console.log(res.data.drinks[al].strDrinkThumb)
+      }
+      console.log(`statusCode: ${res.status}`)
+    })
+    .catch(error => {
+      console.error(error)
+    });
 
 });
 
