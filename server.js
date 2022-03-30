@@ -1,3 +1,5 @@
+import { use } from "express/lib/application";
+import res from "express/lib/response";
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
@@ -78,16 +80,39 @@ app.post("/get-drink", async (req, res, drink) => {
 
 // adds user to firebase database
 app.post("/add-user", async (req, res) => {
-  
+  addUser(req.body).then(() => {
+    res.status(200);
+  })
+  .catch((error) => {
+    res.status(200);
+    console.log(error);
+  });
 });
 
 /*
 HELPER FUNCTIONS
 */
-
 // add-user helper
-function addUser(user, collection) {
-  
+function addUser(user) {
+  var ref = datbase.ref("users/" + user.userId);
+  var status = 200;
+  var err;
+
+  ref.set({
+    name: user.name,
+    gender: user.gender,
+    weight: user.gender,
+    drinkTimestamps: user.drinkTimestamps,
+    timeSinceLastDrink: user.timeSinceLastDrink,
+    status: user.status,
+    bac: user.bac,
+    drunk: user.drunk,
+  })
+};
+
+//update-user helper
+function updateUser(user) {
+
 }
 
 // listening to application at http://localhost:3000/
