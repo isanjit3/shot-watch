@@ -8,6 +8,8 @@ const User = require('./models/user');
 const bodyParser = require('body-parser');
 var axios = require("axios").default;
 
+app.use('/favicon.ico', express.static('public/images/favicon.ico'));
+
 // setting view engine to ejs
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
@@ -29,12 +31,114 @@ app.get("/data-display", async (req, res) => {
 });
 
 //page
-app.get("/shot-counter", async (req, res) => {
-  res.render("shot_counter")
+app.get("/drink-form", async (req, res) => {
+  res.render("drink_form")
 
 });
 
-app.post("/get-drink", async (req, res, drink) => {
+app.post("/get-abv", async (req, res) => {
+  var abv = 0
+  var uri = 'https://www.thecocktaildb.com/api/json/v1/1/search.php' + '?s=' + alc
+
+  axios.get(uri, {
+    headers: {
+      'X-RapidAPI-Host': 'the-cocktail-db.p.rapidapi.com',
+      'X-RapidAPI-Key': 'a238715b31msh1be3143a4b4af8fp17f58cjsn63efa662d1c8'
+    }
+  })
+    .then(res => {
+      //console.log(res.data.drinks)
+      var alcohol = res.data.drinks[1]
+
+      for(ingredient in alcohol) {
+        console.log(ingredient.toString().substring(0,7))
+        //if(ingredient.substring(0,12))
+        /*
+        strIng = alcohol + '.' + ingredient + '' + 
+        strIng = res.data.drinks[al] + '.' + ingredient + '' + al
+        */
+       //console.log(ingredient.substring(0,7))
+
+      }
+      console.log(`statusCode: ${res.status}`)
+    })
+    .catch(error => {
+      console.error(error)
+    });
+
+})
+
+
+app.post("/get-drink", async (req, res) => {
+  var abv = 0
+  var uri = 'https://www.thecocktaildb.com/api/json/v1/1/search.php' + '?s=' + req.body.drink
+
+  axios.get(uri, {
+    headers: {
+      'X-RapidAPI-Host': 'the-cocktail-db.p.rapidapi.com',
+      'X-RapidAPI-Key': 'a238715b31msh1be3143a4b4af8fp17f58cjsn63efa662d1c8'
+    }
+  })
+    .then(res => {
+      //console.log(res.data.drinks)
+      var sum;
+      var pos;
+      var alcohol = res.data.drinks[0]
+      //console.log(alcohol)
+      var counter = 1;
+      var cou = 0;
+      //console.log(Object.values(alcohol)[1])
+
+      for(val in Object.values(alcohol)){
+        if((Object.keys(alcohol)[cou]).toString().substring(0,13) == 'strIngredient') {
+          if(val == 'Tequila') {
+            pos = counter;
+
+
+
+          }
+          counter++;
+        }
+        cou++
+        
+      }
+      
+      for(vl in alcohol) {
+        console.log(vl)
+        if(vl == ('strMeasure' + pos)) {
+          sum = alcohol[vl]
+
+        }
+      }
+      console.log(sum)
+
+
+
+    });
+  });
+
+
+/*
+      for(ingredient in alcohol) { //each field is ingredient
+        console.log(alcohol.ingredient.key)
+        if(ingredient.substring(0,13) == 'strIngredient') {
+          console.log(res.data.drinks[0].ingredient)
+          if(strIng == 'Tequila') {
+            console.log(alcohol.strDrink)
+          }
+          counter++
+        }
+
+*/
+
+        /*
+        strIng = alcohol + '.' + ingredient + '' + 
+        strIng = res.data.drinks[al] + '.' + ingredient + '' + al
+        */
+       //console.log(ingredient.substring(0,13))
+
+      
+    /*
   var alc = req.body.drink
   console.log(alc)
   var uri = 'https://www.thecocktaildb.com/api/json/v1/1/search.php' + '?s=' + alc
@@ -48,7 +152,6 @@ app.post("/get-drink", async (req, res, drink) => {
     .then(res => {
       console.log(res.data.drinks)
       for(al in res.data.drinks) {
-        //Call different API MAYBE
         console.log(res.data.drinks[al].strDrinkThumb)
       }
       console.log(`statusCode: ${res.status}`)
@@ -56,8 +159,8 @@ app.post("/get-drink", async (req, res, drink) => {
     .catch(error => {
       console.error(error)
     });
+*/
 
-});
 
 
 //page
