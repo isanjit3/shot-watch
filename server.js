@@ -1,11 +1,16 @@
+import { use } from "express/lib/application";
+import res from "express/lib/response";
+import { initializeApp } from "firebase/app";
+import { getDatabase } from "firebase/database";
+
 const express = require("express");
 const path = require("path");
 const app = express();
 const PORT = 3000 || process.env.PORT;
-const mongoose = require("mongoose");
-//const MONGO_URI = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false";
-const User = require('./models/user');
 const bodyParser = require('body-parser');
+const firebase = initializeApp(firebaseConfig);
+const database = getDatabase(firebase);
+
 var axios = require("axios").default;
 
 // setting view engine to ejs
@@ -16,24 +21,41 @@ app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyCRAltCRD0ZGbOp1ub8VEWnfjBt4ewvWGg",
+  authDomain: "shot-watch.firebaseapp.com",
+  projectId: "shot-watch",
+  storageBucket: "shot-watch.appspot.com",
+  messagingSenderId: "514081168240",
+  appId: "1:514081168240:web:83d142b62e196da42c4db5",
+  measurementId: "G-ZG9JEK6XYK"
+};
+
 // index page
 app.get("/", async (req, res) => {
-  //await addUser(); // Create new user on page render
   res.render("index");
 });
 
-// page
-app.get("/data-display", async (req, res) => {
-  // const users = await User.find({})
-  res.render("data_display"/*, {users}*/)
+// friends page
+app.get("/friend", async (req, res) => {
+  res.render("friend_list")
 });
 
-//page
+// profile page
+app.get("/profile", async (req, res) => {
+  res.render("profile_page")
+});
+
+// shot counter page
 app.get("/shot-counter", async (req, res) => {
   res.render("shot_counter")
-
 });
 
+/*
+API CALLS
+*/
+// gets user selected drink 
 app.post("/get-drink", async (req, res, drink) => {
   var alc = req.body.drink
   console.log(alc)
@@ -44,93 +66,53 @@ app.post("/get-drink", async (req, res, drink) => {
       'X-RapidAPI-Host': 'the-cocktail-db.p.rapidapi.com',
       'X-RapidAPI-Key': 'a238715b31msh1be3143a4b4af8fp17f58cjsn63efa662d1c8'
     }
-  })
-    .then(res => {
+  }).then(res => {
       console.log(res.data.drinks)
       for(al in res.data.drinks) {
         //Call different API MAYBE
         console.log(res.data.drinks[al].strDrinkThumb)
       }
       console.log(`statusCode: ${res.status}`)
-    })
-    .catch(error => {
+    }).catch(error => {
       console.error(error)
     });
-
 });
 
-
-//page
-app.get("/friend", async (req, res) => {
-  res.render("friend_list")
-});
-
-//page
-app.get("/profile", async (req, res) => {
-  res.render("profile_page")
-});
-
-
-
-// add new user to database
-app.post("/addUser", async (req, res) => {
-  const user = new User(req.body);
-
-  const createdUser = await user.save();
-
-  res.status(200).json(createdUser);
-});
-
-// update existing user in database
-app.post("/updateUser", async (req, res) => {
-
-  const user = await user.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  }).exec()
-
-  res.status(200).json(user);
-});
-
-app.delete("/deleteUser", async (req, res) => {
-  // delete user given id
-  // error handling for invalid indexes
-});
-
-// Connecting to MongoDB
-/*
-mongoose.connection.on("connecting", () => {
-  console.log(`Connecting to Mongo at ${MONGO_URI}`);
-});
-
-mongoose.connection.on("connected", () => {
-  console.log("Mongo connection established");
-});
-
-mongoose.connection.on("error", (error) => {
-  console.log("Mongo connection error", error);
-});
-
-try {
-  mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+// adds user to firebase database
+app.post("/add-user", async (req, res) => {
+  addUser(req.body).then(() => {
+    res.status(200);
+  })
+  .catch((error) => {
+    res.status(200);
+    console.log(error);
   });
-} catch (error) {
-  console.log(`Mongo connection error: ${error}`);
-} */
+});
 
-// default user params
-// used in app.get("/")
-async function addUser() {
-  const user = new User(
-    {
-      username: 'JohnDoe',
-      firstname: 'John',
-      lastname: 'Doe',
-    }
-  )
+/*
+HELPER FUNCTIONS
+*/
+// add-user helper
+function addUser(user) {
+  var ref = datbase.ref("users/" + user.userId);
+  var status = 200;
+  var err;
 
-  const createdUser = await user.save();
+  ref.set({
+    name: user.name,
+    gender: user.gender,
+    weight: user.gender,
+    drinkTimestamps: user.drinkTimestamps,
+    timeSinceLastDrink: user.timeSinceLastDrink,
+    status: user.status,
+    bac: user.bac,
+    drunk: user.drunk,
+  })
+};
+
+//update-user helper
+function updateUser(user) {
+
 }
 
 // listening to application at http://localhost:3000/
